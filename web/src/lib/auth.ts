@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth';
-import { admin, username } from 'better-auth/plugins';
+import { admin, openAPI, username } from 'better-auth/plugins';
 import { env } from '$env/dynamic/private';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { db } from '$lib/server/db';
@@ -8,7 +8,6 @@ import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
 import * as auth_schema from '$lib/server/db/schema/auth-schema';
 import { logger } from './logger';
 
-// Define interface for user creation hook
 interface UserCreationHookData {
 	id?: string;
 	name?: string;
@@ -35,7 +34,7 @@ export const auth = betterAuth({
 			clientSecret: GOOGLE_CLIENT_SECRET as string
 		}
 	},
-	plugins: [admin(), username()],
+	plugins: [admin(), username(), openAPI()],
 	databaseHooks: {
 		user: {
 			create: {
@@ -73,7 +72,6 @@ export const auth = betterAuth({
 						};
 					}
 
-					// Return void to use the original user data
 					return;
 				}
 			}

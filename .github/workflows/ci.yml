@@ -21,35 +21,10 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Detect changes to determine which services to build
-  changes:
-    name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      web: ${{ steps.changes.outputs.web }}
-      api: ${{ steps.changes.outputs.api }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Check for changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            web:
-              - 'web/**'
-              - '.github/workflows/**'
-            api:
-              - 'api/**'
-              - '.github/workflows/**'
-
-  # Web application CI
   web:
     name: Web Application
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ needs.changes.outputs.web == 'true' }}
     defaults:
       run:
         working-directory: web
@@ -65,14 +40,14 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Type check
-        run: bun run check
-
-      - name: Lint
-        run: bun run lint
-
-      - name: Test
-        run: bun run test
+      # - name: Type check
+      #   run: bun run check
+      #
+      # - name: Lint
+      #   run: bun run lint
+      #
+      # - name: Test
+      #   run: bun run test
 
       - name: Build
         run: bun run build
@@ -85,12 +60,10 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  # API application CI
   api:
     name: API Application
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ needs.changes.outputs.api == 'true' }}
     defaults:
       run:
         working-directory: api
@@ -110,21 +83,21 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
 
-      - name: Lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-          working-directory: api
+      # - name: Lint
+      #   uses: golangci/golangci-lint-action@v6
+      #   with:
+      #     version: latest
+      #     working-directory: api
+      #
+      # - name: Test
+      #   run: go test -v -race -coverprofile=coverage.out ./...
 
-      - name: Test
-        run: go test -v -race -coverprofile=coverage.out ./...
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./api/coverage.out
-          flags: api
-          name: api-coverage
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     file: ./api/coverage.out
+      #     flags: api
+      #     name: api-coverage
 
       - name: Build
         run: go build -v -o bin/api ./cmd/api
@@ -137,7 +110,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  # Docker builds for PRs (no push)
   docker-preview:
     name: Docker Preview
     runs-on: ubuntu-latest

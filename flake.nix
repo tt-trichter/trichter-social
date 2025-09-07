@@ -20,6 +20,7 @@
 
           # Packages e.g. used in cli
           packages = with pkgs; [
+            go
             bun
             minio-client
           ];
