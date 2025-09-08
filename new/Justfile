@@ -1,0 +1,8 @@
+default:
+    @just --list
+
+dev:
+    bun run dev
+
+ba_gen:
+    bunx @better-auth/cli generate --config src/lib/auth/index.ts

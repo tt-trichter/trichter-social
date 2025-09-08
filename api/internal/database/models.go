@@ -10,61 +10,62 @@ import (
 
 type Account struct {
 	ID                    string           `json:"id"`
-	AccountID             string           `json:"accountId"`
-	ProviderID            string           `json:"providerId"`
-	UserID                string           `json:"userId"`
-	AccessToken           pgtype.Text      `json:"accessToken"`
-	RefreshToken          pgtype.Text      `json:"refreshToken"`
-	IDToken               pgtype.Text      `json:"idToken"`
-	AccessTokenExpiresAt  pgtype.Timestamp `json:"accessTokenExpiresAt"`
-	RefreshTokenExpiresAt pgtype.Timestamp `json:"refreshTokenExpiresAt"`
+	Accountid             string           `json:"accountid"`
+	Providerid            string           `json:"providerid"`
+	Userid                string           `json:"userid"`
+	Accesstoken           pgtype.Text      `json:"accesstoken"`
+	Refreshtoken          pgtype.Text      `json:"refreshtoken"`
+	Idtoken               pgtype.Text      `json:"idtoken"`
+	Accesstokenexpiresat  pgtype.Timestamp `json:"accesstokenexpiresat"`
+	Refreshtokenexpiresat pgtype.Timestamp `json:"refreshtokenexpiresat"`
 	Scope                 pgtype.Text      `json:"scope"`
 	Password              pgtype.Text      `json:"password"`
-	CreatedAt             pgtype.Timestamp `json:"createdAt"`
-	UpdatedAt             pgtype.Timestamp `json:"updatedAt"`
+	Createdat             pgtype.Timestamp `json:"createdat"`
+	Updatedat             pgtype.Timestamp `json:"updatedat"`
 }
 
 type Run struct {
 	ID        pgtype.UUID      `json:"id"`
-	UserID    pgtype.Text      `json:"userId"`
+	UserID    string           `json:"userId"`
 	Data      []byte           `json:"data"`
 	CreatedAt pgtype.Timestamp `json:"createdAt"`
 	Image     string           `json:"image"`
+	Deleted   bool             `json:"deleted"`
 }
 
 type Session struct {
 	ID             string           `json:"id"`
-	ExpiresAt      pgtype.Timestamp `json:"expiresAt"`
+	Expiresat      pgtype.Timestamp `json:"expiresat"`
 	Token          string           `json:"token"`
-	CreatedAt      pgtype.Timestamp `json:"createdAt"`
-	UpdatedAt      pgtype.Timestamp `json:"updatedAt"`
-	IpAddress      pgtype.Text      `json:"ipAddress"`
-	UserAgent      pgtype.Text      `json:"userAgent"`
-	UserID         string           `json:"userId"`
-	ImpersonatedBy pgtype.Text      `json:"impersonatedBy"`
+	Createdat      pgtype.Timestamp `json:"createdat"`
+	Updatedat      pgtype.Timestamp `json:"updatedat"`
+	Ipaddress      pgtype.Text      `json:"ipaddress"`
+	Useragent      pgtype.Text      `json:"useragent"`
+	Userid         string           `json:"userid"`
+	Impersonatedby pgtype.Text      `json:"impersonatedby"`
 }
 
 type User struct {
 	ID              string           `json:"id"`
 	Name            string           `json:"name"`
 	Email           string           `json:"email"`
-	EmailVerified   bool             `json:"emailVerified"`
-	Username        string           `json:"username"`
-	DisplayUsername string           `json:"displayUsername"`
+	Emailverified   bool             `json:"emailverified"`
 	Image           pgtype.Text      `json:"image"`
-	CreatedAt       pgtype.Timestamp `json:"createdAt"`
-	UpdatedAt       pgtype.Timestamp `json:"updatedAt"`
+	Createdat       pgtype.Timestamp `json:"createdat"`
+	Updatedat       pgtype.Timestamp `json:"updatedat"`
 	Role            pgtype.Text      `json:"role"`
 	Banned          pgtype.Bool      `json:"banned"`
-	BanReason       pgtype.Text      `json:"banReason"`
-	BanExpires      pgtype.Timestamp `json:"banExpires"`
+	Banreason       pgtype.Text      `json:"banreason"`
+	Banexpires      pgtype.Timestamp `json:"banexpires"`
+	Username        pgtype.Text      `json:"username"`
+	Displayusername pgtype.Text      `json:"displayusername"`
 }
 
 type Verification struct {
 	ID         string           `json:"id"`
 	Identifier string           `json:"identifier"`
 	Value      string           `json:"value"`
-	ExpiresAt  pgtype.Timestamp `json:"expiresAt"`
-	CreatedAt  pgtype.Timestamp `json:"createdAt"`
-	UpdatedAt  pgtype.Timestamp `json:"updatedAt"`
+	Expiresat  pgtype.Timestamp `json:"expiresat"`
+	Createdat  pgtype.Timestamp `json:"createdat"`
+	Updatedat  pgtype.Timestamp `json:"updatedat"`
 }

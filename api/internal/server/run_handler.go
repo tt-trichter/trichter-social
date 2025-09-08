@@ -106,15 +106,10 @@ func (s *Server) createRunHandler(c *gin.Context) {
 		return
 	}
 
-	var userId pgtype.Text
-	if runDco.UserID != "" {
-		userId = pgtype.Text{String: runDco.UserID, Valid: true}
-	}
-
 	log.Printf("runData: %s", runData)
 	log.Printf("UserID: %s", runDco.UserID)
 	savedRun, err := s.db.Queries().SaveRun(c.Request.Context(), database.SaveRunParams{
-		UserID: userId,
+		UserID: runDco.UserID,
 		Data:   runData,
 		Image:  runDco.Image,
 	})
@@ -159,11 +154,9 @@ func (s *Server) updateRunUserHandler(c *gin.Context) {
 		return
 	}
 
-	userIDText := pgtype.Text{String: request.UserID, Valid: true}
-
 	_, err := s.db.Queries().UpdateRunWithUser(c.Request.Context(), database.UpdateRunWithUserParams{
 		ID:     runUUID,
-		UserID: userIDText,
+		UserID: request.UserID,
 	})
 	if err != nil {
 		log.Printf("Error updating run user: %v", err)

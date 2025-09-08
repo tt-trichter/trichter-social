@@ -28,9 +28,10 @@ SELECT
     r.created_at,
     u.id as user_id,
     u.name as user_name,
-    u.display_username as user_username
+    u.displayusername as user_username
 FROM runs r
 LEFT JOIN "user" u ON r.user_id = u.id
+WHERE NOT r.deleted
 ORDER BY r.created_at DESC
 `
 
@@ -81,19 +82,27 @@ LIMIT $2
 `
 
 type GetRecentRunsForUserParams struct {
-	UserID pgtype.Text `json:"userId"`
-	Limit  int32       `json:"limit"`
+	UserID string `json:"userId"`
+	Limit  int32  `json:"limit"`
 }
 
-func (q *Queries) GetRecentRunsForUser(ctx context.Context, arg GetRecentRunsForUserParams) ([]Run, error) {
+type GetRecentRunsForUserRow struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserID    string           `json:"userId"`
+	Data      []byte           `json:"data"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Image     string           `json:"image"`
+}
+
+func (q *Queries) GetRecentRunsForUser(ctx context.Context, arg GetRecentRunsForUserParams) ([]GetRecentRunsForUserRow, error) {
 	rows, err := q.db.Query(ctx, getRecentRunsForUser, arg.UserID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Run
+	var items []GetRecentRunsForUserRow
 	for rows.Next() {
-		var i Run
+		var i GetRecentRunsForUserRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -116,15 +125,23 @@ SELECT id, user_id, data, created_at, image FROM runs
 ORDER BY created_at DESC
 `
 
-func (q *Queries) GetRuns(ctx context.Context) ([]Run, error) {
+type GetRunsRow struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserID    string           `json:"userId"`
+	Data      []byte           `json:"data"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Image     string           `json:"image"`
+}
+
+func (q *Queries) GetRuns(ctx context.Context) ([]GetRunsRow, error) {
 	rows, err := q.db.Query(ctx, getRuns)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Run
+	var items []GetRunsRow
 	for rows.Next() {
-		var i Run
+		var i GetRunsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -149,15 +166,23 @@ WHERE user_id = $1
 ORDER BY created_at DESC
 `
 
-func (q *Queries) GetRunsByUserId(ctx context.Context, userID pgtype.Text) ([]Run, error) {
+type GetRunsByUserIdRow struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserID    string           `json:"userId"`
+	Data      []byte           `json:"data"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Image     string           `json:"image"`
+}
+
+func (q *Queries) GetRunsByUserId(ctx context.Context, userID string) ([]GetRunsByUserIdRow, error) {
 	rows, err := q.db.Query(ctx, getRunsByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Run
+	var items []GetRunsByUserIdRow
 	for rows.Next() {
-		var i Run
+		var i GetRunsByUserIdRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
@@ -182,9 +207,9 @@ WHERE id = $1
 `
 
 type GetUserByIdRow struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Username string `json:"username"`
+	ID       string      `json:"id"`
+	Name     string      `json:"name"`
+	Username pgtype.Text `json:"username"`
 }
 
 func (q *Queries) GetUserById(ctx context.Context, id string) (GetUserByIdRow, error) {
@@ -201,14 +226,22 @@ RETURNING id, user_id, data, created_at, image
 `
 
 type SaveRunParams struct {
-	UserID pgtype.Text `json:"userId"`
-	Data   []byte      `json:"data"`
-	Image  string      `json:"image"`
+	UserID string `json:"userId"`
+	Data   []byte `json:"data"`
+	Image  string `json:"image"`
 }
 
-func (q *Queries) SaveRun(ctx context.Context, arg SaveRunParams) (Run, error) {
+type SaveRunRow struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserID    string           `json:"userId"`
+	Data      []byte           `json:"data"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Image     string           `json:"image"`
+}
+
+func (q *Queries) SaveRun(ctx context.Context, arg SaveRunParams) (SaveRunRow, error) {
 	row := q.db.QueryRow(ctx, saveRun, arg.UserID, arg.Data, arg.Image)
-	var i Run
+	var i SaveRunRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
@@ -220,7 +253,7 @@ func (q *Queries) SaveRun(ctx context.Context, arg SaveRunParams) (Run, error) {
 }
 
 const searchUsersByName = `-- name: SearchUsersByName :many
-SELECT id, name, username, display_username
+SELECT id, name, username, displayusername
 FROM "user"
 WHERE name ILIKE '%' || $1 || '%' OR username ILIKE '%' || $1 || '%'
 ORDER BY name
@@ -233,10 +266,10 @@ type SearchUsersByNameParams struct {
 }
 
 type SearchUsersByNameRow struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	Username        string `json:"username"`
-	DisplayUsername string `json:"displayUsername"`
+	ID              string      `json:"id"`
+	Name            string      `json:"name"`
+	Username        pgtype.Text `json:"username"`
+	Displayusername pgtype.Text `json:"displayusername"`
 }
 
 func (q *Queries) SearchUsersByName(ctx context.Context, arg SearchUsersByNameParams) ([]SearchUsersByNameRow, error) {
@@ -252,7 +285,7 @@ func (q *Queries) SearchUsersByName(ctx context.Context, arg SearchUsersByNamePa
 			&i.ID,
 			&i.Name,
 			&i.Username,
-			&i.DisplayUsername,
+			&i.Displayusername,
 		); err != nil {
 			return nil, err
 		}
@@ -273,12 +306,20 @@ RETURNING id, user_id, data, created_at, image
 
 type UpdateRunWithUserParams struct {
 	ID     pgtype.UUID `json:"id"`
-	UserID pgtype.Text `json:"userId"`
+	UserID string      `json:"userId"`
 }
 
-func (q *Queries) UpdateRunWithUser(ctx context.Context, arg UpdateRunWithUserParams) (Run, error) {
+type UpdateRunWithUserRow struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserID    string           `json:"userId"`
+	Data      []byte           `json:"data"`
+	CreatedAt pgtype.Timestamp `json:"createdAt"`
+	Image     string           `json:"image"`
+}
+
+func (q *Queries) UpdateRunWithUser(ctx context.Context, arg UpdateRunWithUserParams) (UpdateRunWithUserRow, error) {
 	row := q.db.QueryRow(ctx, updateRunWithUser, arg.ID, arg.UserID)
-	var i Run
+	var i UpdateRunWithUserRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
