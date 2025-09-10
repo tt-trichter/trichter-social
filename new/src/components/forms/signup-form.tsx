@@ -1,6 +1,5 @@
 'use client'
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,40 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { SocialLoginButton } from "./social-login-button"
-import { fieldContext, formContext, useFormContext } from "./hooks/form-context"
-import { createFormHook, formOptions, revalidateLogic, useForm } from "@tanstack/react-form"
-import TextField from "./form/text-field"
+import { SocialLoginButton } from "./buttons/social-login-button"
+import { formOptions, revalidateLogic } from "@tanstack/react-form"
 import z from "zod"
 import { authClient } from "@/lib/auth/auth-client"
+import { useAppForm } from "../hooks/form-hooks"
+import { useRouter } from "next/navigation"
 
 
-function SignUpButton() {
-  const form = useFormContext()
-  return (
-    <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-      {([canSubmit, isSubmitting]) =>
-        <Button type="submit" className="w-full" disabled={!canSubmit}>
-          {isSubmitting ? '...' : 'SignUp'}
-        </Button>
-      }
-    </form.Subscribe>
-  )
-}
-
-const { useAppForm } = createFormHook({
-  fieldComponents: {
-    TextField,
-  },
-  formComponents: {
-    SignUpButton
-  },
-  fieldContext,
-  formContext
-})
-
-export const signUpFormOpts = formOptions({
+const signUpFormOpts = formOptions({
   defaultValues: {
+    fullName: '',
     username: '',
     email: '',
     password: '',
@@ -50,6 +26,7 @@ export const signUpFormOpts = formOptions({
 })
 
 const sigUpFormSchema = z.object({
+  fullName: z.string(),
   username: z.string().min(1, 'Username is required'),
   email: z.email('Valid email is required'),
   password: z.string()
@@ -62,6 +39,7 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter();
   const form = useAppForm({
     ...signUpFormOpts,
     validationLogic: revalidateLogic(),
@@ -81,17 +59,18 @@ export function SignUpForm({
       }
     },
     onSubmit: async ({ value }) => {
-      console.log("hi")
       const { error } = await authClient.signUp.email({
         email: value.email,
         password: value.password,
-        name: value.username,
+        name: value.fullName || value.username,
         username: value.username
       })
       if (error) {
+        alert("Something went wrong...")
         console.error(error)
       } else {
-        // form.reset()
+        window.history.pushState(null, '', '/')
+        router.push('/')
       }
     }
   })
@@ -120,46 +99,43 @@ export function SignUpForm({
                 </span>
               </div>
               <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <form.AppField
-                    name="username"
-                  >
-                    {(field) => <field.TextField label="Username" placeholder="MaxMustermann" type="text" />}
-                  </form.AppField>
-                </div>
-                <div className="grid gap-3">
-                  <form.AppField
-                    name="email"
-                  >
+                <form.AppField
+                  name="fullName"
+                >
+                  {(field) => <field.TextField label="Full Name" placeholder="Max Mustermann" type="text" />}
+                </form.AppField>
+                <form.AppField
+                  name="username"
+                >
+                  {(field) => <field.TextField label="Username" placeholder="MaxMustermann161" type="text" />}
+                </form.AppField>
+                <form.AppField
+                  name="email"
+                >
 
-                    {(field) => <field.TextField label="Email" placeholder="max@example.com" type="email" />}
-                  </form.AppField>
-                </div>
-                <div className="grid gap-3">
-                  <form.AppField
-                    name="password"
-                  >
-                    {(field) => <field.TextField label="Password" type="password" placeholder="" />}
-                  </form.AppField>
-                </div>
-                <div className="grid gap-3">
-                  <form.AppField
-                    name="confirmPassword"
-                    validators={{
-                      onChangeListenTo: ['password'],
-                      onChange: ({ value, fieldApi }) => {
-                        if (value !== fieldApi.form.getFieldValue('password')) {
-                          return 'Passwords do not match'
-                        }
-                        return undefined
-                      },
-                    }}
-                  >
-                    {(field) => <field.TextField label="Confirm Password" type="password" placeholder="" />}
-                  </form.AppField>
-                </div>
+                  {(field) => <field.TextField label="Email" placeholder="max@example.com" type="email" />}
+                </form.AppField>
+                <form.AppField
+                  name="password"
+                >
+                  {(field) => <field.TextField label="Password" type="password" placeholder="" />}
+                </form.AppField>
+                <form.AppField
+                  name="confirmPassword"
+                  validators={{
+                    onChangeListenTo: ['password'],
+                    onChange: ({ value, fieldApi }) => {
+                      if (value !== fieldApi.form.getFieldValue('password')) {
+                        return 'Passwords do not match'
+                      }
+                      return undefined
+                    },
+                  }}
+                >
+                  {(field) => <field.TextField label="Confirm Password" type="password" placeholder="" />}
+                </form.AppField>
                 <form.AppForm>
-                  <form.SignUpButton />
+                  <form.SubmitButton label="SignUp" />
                 </form.AppForm>
               </div>
               <div className="text-center text-sm">

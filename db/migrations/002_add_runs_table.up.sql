@@ -1,9 +1,10 @@
 CREATE TABLE "runs" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"userId" text NOT NULL REFERENCES "user"("id") ON DELETE SET NULL,
+	"accepted" boolean DEFAULT false NOT NULL,
 	"data" jsonb NOT NULL,
 	"createdAt" timestamp NOT NULL,
-	"image" text DEFAULT 'placeholder' NOT NULL,
+	"image" text,
 	"deleted" boolean DEFAULT false NOT NULL
 );
 

@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/tt-trichter/app/api/internal/database"
 )
 
@@ -30,7 +29,7 @@ func (s *Server) searchUsersHandler(c *gin.Context) {
 	}
 
 	users, err := s.db.Queries().SearchUsersByName(c.Request.Context(), database.SearchUsersByNameParams{
-		Column1: pgtype.Text{String: name, Valid: true},
+		Column1: &name,
 		Limit:   int32(limit),
 	})
 	if err != nil {

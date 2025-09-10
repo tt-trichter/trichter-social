@@ -10,62 +10,63 @@ import (
 
 type Account struct {
 	ID                    string           `json:"id"`
-	Accountid             string           `json:"accountid"`
-	Providerid            string           `json:"providerid"`
-	Userid                string           `json:"userid"`
-	Accesstoken           pgtype.Text      `json:"accesstoken"`
-	Refreshtoken          pgtype.Text      `json:"refreshtoken"`
-	Idtoken               pgtype.Text      `json:"idtoken"`
-	Accesstokenexpiresat  pgtype.Timestamp `json:"accesstokenexpiresat"`
-	Refreshtokenexpiresat pgtype.Timestamp `json:"refreshtokenexpiresat"`
-	Scope                 pgtype.Text      `json:"scope"`
-	Password              pgtype.Text      `json:"password"`
-	Createdat             pgtype.Timestamp `json:"createdat"`
-	Updatedat             pgtype.Timestamp `json:"updatedat"`
+	AccountId             string           `json:"accountId"`
+	ProviderId            string           `json:"providerId"`
+	UserId                string           `json:"userId"`
+	AccessToken           *string          `json:"accessToken"`
+	RefreshToken          *string          `json:"refreshToken"`
+	IdToken               *string          `json:"idToken"`
+	AccessTokenExpiresAt  pgtype.Timestamp `json:"accessTokenExpiresAt"`
+	RefreshTokenExpiresAt pgtype.Timestamp `json:"refreshTokenExpiresAt"`
+	Scope                 *string          `json:"scope"`
+	Password              *string          `json:"password"`
+	CreatedAt             pgtype.Timestamp `json:"createdAt"`
+	UpdatedAt             pgtype.Timestamp `json:"updatedAt"`
 }
 
 type Run struct {
 	ID        pgtype.UUID      `json:"id"`
-	UserID    string           `json:"userId"`
+	UserId    string           `json:"userId"`
+	Accepted  bool             `json:"accepted"`
 	Data      []byte           `json:"data"`
 	CreatedAt pgtype.Timestamp `json:"createdAt"`
-	Image     string           `json:"image"`
+	Image     *string          `json:"image"`
 	Deleted   bool             `json:"deleted"`
 }
 
 type Session struct {
 	ID             string           `json:"id"`
-	Expiresat      pgtype.Timestamp `json:"expiresat"`
+	ExpiresAt      pgtype.Timestamp `json:"expiresAt"`
 	Token          string           `json:"token"`
-	Createdat      pgtype.Timestamp `json:"createdat"`
-	Updatedat      pgtype.Timestamp `json:"updatedat"`
-	Ipaddress      pgtype.Text      `json:"ipaddress"`
-	Useragent      pgtype.Text      `json:"useragent"`
-	Userid         string           `json:"userid"`
-	Impersonatedby pgtype.Text      `json:"impersonatedby"`
+	CreatedAt      pgtype.Timestamp `json:"createdAt"`
+	UpdatedAt      pgtype.Timestamp `json:"updatedAt"`
+	IpAddress      *string          `json:"ipAddress"`
+	UserAgent      *string          `json:"userAgent"`
+	UserId         string           `json:"userId"`
+	ImpersonatedBy *string          `json:"impersonatedBy"`
 }
 
 type User struct {
 	ID              string           `json:"id"`
 	Name            string           `json:"name"`
 	Email           string           `json:"email"`
-	Emailverified   bool             `json:"emailverified"`
-	Image           pgtype.Text      `json:"image"`
-	Createdat       pgtype.Timestamp `json:"createdat"`
-	Updatedat       pgtype.Timestamp `json:"updatedat"`
-	Role            pgtype.Text      `json:"role"`
-	Banned          pgtype.Bool      `json:"banned"`
-	Banreason       pgtype.Text      `json:"banreason"`
-	Banexpires      pgtype.Timestamp `json:"banexpires"`
-	Username        pgtype.Text      `json:"username"`
-	Displayusername pgtype.Text      `json:"displayusername"`
+	EmailVerified   bool             `json:"emailVerified"`
+	Image           *string          `json:"image"`
+	CreatedAt       pgtype.Timestamp `json:"createdAt"`
+	UpdatedAt       pgtype.Timestamp `json:"updatedAt"`
+	Role            *string          `json:"role"`
+	Banned          *bool            `json:"banned"`
+	BanReason       *string          `json:"banReason"`
+	BanExpires      pgtype.Timestamp `json:"banExpires"`
+	Username        *string          `json:"username"`
+	DisplayUsername *string          `json:"displayUsername"`
 }
 
 type Verification struct {
 	ID         string           `json:"id"`
 	Identifier string           `json:"identifier"`
 	Value      string           `json:"value"`
-	Expiresat  pgtype.Timestamp `json:"expiresat"`
-	Createdat  pgtype.Timestamp `json:"createdat"`
-	Updatedat  pgtype.Timestamp `json:"updatedat"`
+	ExpiresAt  pgtype.Timestamp `json:"expiresAt"`
+	CreatedAt  pgtype.Timestamp `json:"createdAt"`
+	UpdatedAt  pgtype.Timestamp `json:"updatedAt"`
 }

@@ -2,6 +2,11 @@ import { betterAuth } from "better-auth";
 import { admin, openAPI, username } from "better-auth/plugins";
 import { Pool } from "pg";
 
+export type Session = typeof auth.$Infer.Session
+export type User = Session["user"]
+
+
+
 export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,

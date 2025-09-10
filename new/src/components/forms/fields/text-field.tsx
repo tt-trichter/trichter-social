@@ -1,7 +1,7 @@
+import { useFieldContext } from '@/components/hooks/form-hooks';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useStore } from '@tanstack/react-form'
-import { useFieldContext } from "../hooks/form-context";
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
 import { HTMLInputTypeAttribute } from 'react';
 
 export default function TextField({ label, placeholder = "", type = "text" }: { label: string, placeholder: string | undefined, type: HTMLInputTypeAttribute }) {

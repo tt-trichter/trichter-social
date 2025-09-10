@@ -28,7 +28,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 		{
 			runs.GET("", s.getRunsWithUsersHandler)
 			runs.POST("", s.createRunHandler)
-			runs.PUT("/:id/user", s.updateRunUserHandler)
 			runs.DELETE("/:id", s.deleteRunHandler)
 		}
 

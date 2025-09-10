@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, Shield, ShieldOff } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,38 +12,42 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { User } from "@/lib/auth"
+import { UserWithRole } from "better-auth/plugins"
+import { Badge } from "@/components/ui/badge"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<UserWithRole>[] = [
     {
-        accessorKey: "status",
-        header: "Status",
+        accessorKey: "displayUsername",
+        header: "Username",
+    },
+    {
+        accessorKey: "name",
+        header: "Full Name",
     },
     {
         accessorKey: "email",
-        header: "Email",
+        header: "Email"
     },
     {
-        accessorKey: "amount",
-        header: () => <div className="text-right">Amount</div>,
+        accessorKey: "role",
+        header: "Role",
         cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("amount"))
-            const formatted = new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(amount)
-
-            return <div className="text-right font-medium">{formatted}</div>
+            const role = row.getValue("role")
         },
 
+    },
+    {
+        accessorKey: "emailVerified",
+        header: "Verified",
+        cell: ({ row }) => {
+            const isVerified = row.getValue("emailVerified") as boolean
+            if (isVerified) {
+                return <Badge variant="default" className="bg-green-500"><Shield /></Badge>
+            } else {
+                return <Badge variant="default" className="bg-red-500"><ShieldOff /></Badge>
+            }
+        }
     },
     {
         id: "actions",
