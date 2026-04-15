@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS build
+FROM golang:1.25-alpine AS build
 
 WORKDIR /app
 
@@ -17,8 +17,8 @@ WORKDIR /root/
 
 COPY --from=build /app/main .
 
-EXPOSE 8090
+EXPOSE 8080
 
 CMD ["./main"]
 
-
+LABEL org.opencontainers.image.source=https://github.com/tt-trichter/trichter-social

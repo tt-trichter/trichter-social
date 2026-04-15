@@ -1,0 +1,29 @@
+# node
+node_modules
+npm-debug.log
+.yarn
+.pnpm-store
+
+# next
+# .next
+out
+
+# vcs / editors
+.git
+.gitignore
+.vscode
+.idea
+
+# misc
+Dockerfile*
+docker-compose*.yml
+*.local
+.env*.local
+
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
